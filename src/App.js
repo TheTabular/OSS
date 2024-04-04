@@ -26,13 +26,13 @@ function App() {
     const data = {
       model_type: modelType,
       odds_provider: oddsProvider,
-      state: selectedState,
+      state: selectedState, 
     };
 
     console.log("Sending data:", data);
 
     try {
-      const response = await fetch('https://api.opensourcessports.xyz/predict', {
+      const response = await fetch('https://api.opensourcesports.xyz/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
