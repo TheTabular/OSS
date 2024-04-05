@@ -247,3 +247,42 @@ button:disabled {
   color: #ffffff;
   margin-bottom: 10px;
 }
+
+
+@media (max-width: 600px) {
+  .match-prediction {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .team-prediction img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 3px;
+  }
+
+  .team-header {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .total-value {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .team-prediction p,
+  .total-predictions p {
+    margin: 1px 0;
+  }
+
+  .column-headers {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  .commence-time {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+}
