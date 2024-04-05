@@ -251,38 +251,49 @@ button:disabled {
 
 @media (max-width: 600px) {
   .match-prediction {
-    font-size: 12px;
-    padding: 5px;
+    font-size: 10px;
+    padding: 3px;
   }
 
   .team-prediction img {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 3px;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 2px;
   }
 
   .team-header {
-    font-size: 16px;
-    margin-bottom: 5px;
+    font-size: 14px;
+    margin-bottom: 3px;
   }
 
   .total-value {
-    font-size: 16px;
-    margin-bottom: 5px;
+    font-size: 14px;
+    margin-bottom: 3px;
   }
 
   .team-prediction p,
   .total-predictions p {
     margin: 1px 0;
+    font-size: 10px;
   }
 
   .column-headers {
-    font-size: 18px;
-    margin-bottom: 5px;
+    font-size: 16px;
+    margin-bottom: 3px;
   }
 
   .commence-time {
-    font-size: 12px;
-    margin-bottom: 5px;
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+
+  .over-under p {
+    font-size: 10px;
+  }
+
+  .match-prediction::before,
+  .match-prediction::after {
+    top: 20px;
+    bottom: 20px;
   }
 }
