@@ -12,6 +12,7 @@ function App() {
   const [isStateSelected, setIsStateSelected] = useState(false);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [noGamesMessage, setNoGamesMessage] = useState('');
 
   const handleStateChange = (e) => {
     const state = e.target.value;
@@ -22,6 +23,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setNoGamesMessage('');
 
     const data = {
       model_type: modelType,
@@ -32,7 +34,7 @@ function App() {
     console.log("Sending data:", data);
 
     try {
-      const response = await fetch('https://api.opensourcesports.xyz/predict', {
+      const response = await fetch('http://127.0.0.1:8080/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,6 +45,10 @@ function App() {
       const result = await response.json();
       setResults(result);
       setIsLoading(false);
+
+      if (Object.keys(result).length === 0) {
+        setNoGamesMessage('No games found today');
+      }
     } catch (error) {
       console.error('Error:', error);
       setIsLoading(false);
@@ -133,6 +139,9 @@ function App() {
             Run Model
           </button>
           {isLoading && <div className="spinner"></div>}
+          {!isLoading && noGamesMessage && (
+            <p>{noGamesMessage}</p>
+          )}
         </form>
     
         {hasResults && (
