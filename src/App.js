@@ -34,7 +34,7 @@ function App() {
     console.log("Sending data:", data);
 
     try {
-      const response = await fetch('http://127.0.0.1:8080/predict', {
+      const response = await fetch('https://api.opensourcesports.xyz/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
