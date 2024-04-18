@@ -4,6 +4,7 @@ import stateMapping from './stateMapping';
 import providerMapping from './providerMapping';
 import timezoneMapping from './timezoneMapping';
 import moment from 'moment-timezone';
+import ArchivedData from './ArchivedData';
 
 function App() {
   const [modelType, setModelType] = useState('nn');
@@ -13,6 +14,8 @@ function App() {
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noGamesMessage, setNoGamesMessage] = useState('');
+  const [activeButton, setActiveButton] = useState('run-model');
+  const [archivedData, setArchivedData] = useState([]);
 
   const handleStateChange = (e) => {
     const state = e.target.value;
@@ -24,15 +27,16 @@ function App() {
     e.preventDefault();
     setIsLoading(true);
     setNoGamesMessage('');
-
+    setActiveButton('run-model');
+  
     const data = {
       model_type: modelType,
       odds_provider: oddsProvider,
       state: selectedState, 
     };
-
+  
     console.log("Sending data:", data);
-
+  
     try {
       const response = await fetch('https://api.opensourcesports.xyz/predict', {
         method: 'POST',
@@ -41,11 +45,11 @@ function App() {
         },
         body: JSON.stringify(data),
       });
-
+  
       const result = await response.json();
       setResults(result);
       setIsLoading(false);
-
+  
       if (Object.keys(result).length === 0) {
         setNoGamesMessage('No games found today');
       }
@@ -54,8 +58,25 @@ function App() {
       setIsLoading(false);
     }
   };
+  
+  const handleArchivedResults = async () => {
+    setActiveButton('archived-results');
+    setIsLoading(true);
+    setNoGamesMessage('');
+    setResults([]); // Clear the results when switching to archived-results view
+    try {
+      const response = await fetch('https://api.opensourcesports.xyz/archived-data');
+      const data = await response.json();
+      setArchivedData(data);
+    } catch (error) {
+      console.error('Error fetching archived data:', error);
+    } finally {
+      setIsLoading(false); // Ensure loading state is updated irrespective of request success
+    }
+  };
 
-  const hasResults = Object.keys(results).length > 0;
+  // Logic for rendering the ArchivedData component
+  const hasModelResults = Object.keys(results).length > 0;
 
   const allOddsProviders = [
     'bettoredge',
@@ -106,8 +127,8 @@ function App() {
           </div>
     
           <div className="form-group">
-            <label>Odds Provider</label>
-            <div className="form-group">
+          <label>Odds Provider</label>
+          <div className="form-group">
             <select
               value={selectedState}
               onChange={handleStateChange}
@@ -134,17 +155,34 @@ function App() {
               ))}
             </div>
           </div>
+          
+          <div className="form-group">
+          <label>Action Options</label>
+          <div className="button-group">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={activeButton === 'run-model' ? 'active' : ''}
+            >
+              Run Model
+            </button>
+            <button
+              type="button"
+              onClick={handleArchivedResults}
+              className={activeButton === 'archived-results' ? 'active' : ''}
+            >
+              Archived Results
+            </button>
+          </div>
+        </div>
+        
+        {isLoading && <div className="spinner"></div>}
+        {!isLoading && noGamesMessage && (
+          <p>{noGamesMessage}</p>
+        )}
+      </form>
     
-          <button type="submit" disabled={isLoading}>
-            Run Model
-          </button>
-          {isLoading && <div className="spinner"></div>}
-          {!isLoading && noGamesMessage && (
-            <p>{noGamesMessage}</p>
-          )}
-        </form>
-    
-        {hasResults && (
+      {activeButton === 'run-model' && hasModelResults && (
           <div className="results-section">
             <h2>Match Predictions</h2>
             <div className="column-headers">
@@ -226,6 +264,11 @@ function App() {
             ))}
           </div>
         )}
+        {
+          activeButton === 'archived-results' && !isLoading && (
+            <ArchivedData archivedData={archivedData} />
+          )
+        }
       </div>
     );
 }
