@@ -167,35 +167,78 @@ const Odds = () => {
                 <div className="odds-table">
                   {game.bookmakers.map((bookmaker) => (
                     <div key={bookmaker.key} className="odds-bookmaker-row">
+                      <div className="odds-bookmaker-name">{bookmaker.title}</div>
+                      <div className="odds-row">
                       <div className="odds-cell">
-                        {selectedBetType === 'spreads' &&
-                          bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.price}
-                        {selectedBetType === 'h2h' &&
-                          bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[0]?.price}
-                        {selectedBetType === 'totals' &&
-                          bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[0]?.price}
-                      </div>
-                      <div className="odds-bookmaker-cell">
-                        <p className="odds-bookmaker-name">{bookmaker.title}</p>
-                        {selectedBetType === 'spreads' && (
-                          <p className="odds-bookmaker-line">
-                            {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.point}
-                          </p>
-                        )}
-                        {selectedBetType === 'h2h' && <p className="odds-bookmaker-line">Winner</p>}
-                        {selectedBetType === 'totals' && (
-                          <p className="odds-bookmaker-line">
-                            {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[0]?.point}
-                          </p>
-                        )}
-                      </div>
-                      <div className="odds-cell">
-                        {selectedBetType === 'spreads' &&
-                          bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[1]?.price}
-                        {selectedBetType === 'h2h' &&
-                          bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[1]?.price}
-                        {selectedBetType === 'totals' &&
-                          bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[1]?.price}
+  {selectedBetType === 'spreads' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.price}
+    </span>
+  )}
+  {selectedBetType === 'h2h' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[0]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[0]?.price}
+    </span>
+  )}
+  {selectedBetType === 'totals' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[0]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[0]?.price}
+    </span>
+  )}
+</div>
+<div className="odds-line-container">
+  <div className="odds-line-cell">
+    {selectedBetType === 'spreads' && (
+      <span>
+        {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.point >= 0 ? '+' : ''}
+        {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[0]?.point}
+      </span>
+    )}
+    {selectedBetType === 'h2h' && <span>Away</span>}
+    {selectedBetType === 'totals' && (
+      <span>
+        O {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[0]?.point}
+      </span>
+    )}
+  </div>
+  <div className="odds-line-cell">
+    {selectedBetType === 'spreads' && (
+      <span>
+        {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[1]?.point >= 0 ? '+' : ''}
+        {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[1]?.point}
+      </span>
+    )}
+    {selectedBetType === 'h2h' && <span>Home</span>}
+    {selectedBetType === 'totals' && (
+      <span>
+        U {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[1]?.point}
+      </span>
+    )}
+  </div>
+</div>
+<div className="odds-cell">
+  {selectedBetType === 'spreads' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[1]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'spreads')?.outcomes[1]?.price}
+    </span>
+  )}
+  {selectedBetType === 'h2h' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[1]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'h2h')?.outcomes[1]?.price}
+    </span>
+  )}
+  {selectedBetType === 'totals' && (
+    <span>
+      {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[1]?.price >= 100 ? '+' : ''}
+      {bookmaker.markets.find((market) => market.key === 'totals')?.outcomes[1]?.price}
+    </span>
+  )}
+</div>
                       </div>
                     </div>
                   ))}
