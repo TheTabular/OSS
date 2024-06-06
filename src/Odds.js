@@ -1,40 +1,47 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import './Odds.css';
 
 const Odds = () => {
-  const [selectedLeague, setSelectedLeague] = useState({ id: '3', fetch: false });
+  const getInitialLeague = () => {
+    const storedLeague = localStorage.getItem('selectedLeague');
+    if (storedLeague) {
+      return { id: storedLeague };
+    }
+    return { id: '3' }; // Default to MLB
+  };
+
+  const [selectedLeagueId, setSelectedLeagueId] = useState(getInitialLeague().id);
   const [oddsData, setOddsData] = useState([]);
   const [expandedGame, setExpandedGame] = useState(null);
   const [selectedBetType, setSelectedBetType] = useState('spreads');
   const [isLoading, setIsLoading] = useState(true);
   const [noGamesMessage, setNoGamesMessage] = useState('');
 
-  const fetchOddsData = useCallback(async () => {
-    setIsLoading(true);
-    setNoGamesMessage('');
-    setOddsData([]);
-  
-    try {
-      const response = await axios.get(`https://api.opensourcessports.xyz/odds?league_id=${selectedLeague.id}`);
-      if (response.data.length === 0) {
-        setNoGamesMessage('No games found today');
-      } else {
-        setOddsData(response.data);
-      }
-      setIsLoading(false);
-      setSelectedLeague((prevState) => ({ ...prevState, fetch: false }));
-    } catch (error) {
-      console.error('Error fetching odds data:', error);
-      setIsLoading(false);
-    }
-  }, [selectedLeague.id]);
+  const selectedLeague = useMemo(() => ({ id: selectedLeagueId }), [selectedLeagueId]);
 
   useEffect(() => {
-    if (selectedLeague.fetch) {
-      fetchOddsData();
-    }
-  }, [selectedLeague.fetch, fetchOddsData]);
+    const fetchOddsData = async () => {
+      setIsLoading(true);
+      setNoGamesMessage('');
+      setOddsData([]);
+
+      try {
+        const response = await axios.get(`https://api.opensourcesports.xyz/odds?league_id=${selectedLeague.id}`);
+        if (response.data.length === 0) {
+          setNoGamesMessage('No games found today');
+        } else {
+          setOddsData(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching odds data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOddsData();
+  }, [selectedLeague.id]);
 
   const formatDateTime = (dateTimeString) => {
     if (!dateTimeString) {
@@ -66,6 +73,11 @@ const Odds = () => {
     setSelectedBetType(betType);
   };
 
+  const handleLeagueChange = (leagueId) => {
+    setSelectedLeagueId(leagueId);
+    localStorage.setItem('selectedLeague', leagueId);
+  };
+
   const getLeagueFolder = () => {
     switch (selectedLeague.id) {
       case '3':
@@ -88,7 +100,7 @@ const Odds = () => {
             <input
               type="checkbox"
               checked={selectedLeague.id === '3'}
-              onChange={() => setSelectedLeague({ id: '3', fetch: true })}
+              onChange={() => handleLeagueChange('3')}
             />
             <span>MLB</span>
           </label>
@@ -96,7 +108,7 @@ const Odds = () => {
             <input
               type="checkbox"
               checked={selectedLeague.id === '6'}
-              onChange={() => setSelectedLeague({ id: '6', fetch: true })}
+              onChange={() => handleLeagueChange('6')}
             />
             <span>NHL</span>
           </label>
@@ -104,7 +116,7 @@ const Odds = () => {
             <input
               type="checkbox"
               checked={selectedLeague.id === '7'}
-              onChange={() => setSelectedLeague({ id: '7', fetch: true })}
+              onChange={() => handleLeagueChange('7')}
             />
             <span>NBA</span>
           </label>
