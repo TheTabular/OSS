@@ -16,7 +16,7 @@ const Odds = () => {
     setOddsData([]);
   
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/odds?league_id=${selectedLeague.id}`);
+      const response = await axios.get(`https://api.opensourcessports.xyz/odds?league_id=${selectedLeague.id}`);
       if (response.data.length === 0) {
         setNoGamesMessage('No games found today');
       } else {
