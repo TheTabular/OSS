@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './Horses.css';
-import moment from 'moment-timezone';
 
 function Horses() {
   const [modelType, setModelType] = useState('nn');

@@ -4,7 +4,7 @@ import Horses from './Horses';
 import MajorLeague from './MajorLeague';
 
 function Models() {
-  const [selectedLeague, setSelectedLeague] = useState('7');
+  const [selectedLeague, setSelectedLeague] = useState('3');
 
   return (
     <div className="Models">
