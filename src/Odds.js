@@ -25,9 +25,13 @@ const Odds = () => {
       setIsLoading(true);
       setNoGamesMessage('');
       setOddsData([]);
-
+  
+      console.log(`Fetching odds data for league: ${selectedLeague.id}`);
+  
       try {
         const response = await axios.get(`https://api.opensourcesports.xyz/odds?league_id=${selectedLeague.id}`);
+        console.log(`Odds data fetched for league: ${selectedLeague.id}`, response.data);
+  
         if (response.data.length === 0) {
           setNoGamesMessage('No games found today');
         } else {
@@ -39,7 +43,7 @@ const Odds = () => {
         setIsLoading(false);
       }
     };
-
+  
     fetchOddsData();
   }, [selectedLeague.id]);
 
@@ -75,6 +79,8 @@ const Odds = () => {
 
   const handleLeagueChange = (leagueId) => {
     setSelectedLeagueId(leagueId);
+    setOddsData([]);
+    setExpandedGame(null);
     localStorage.setItem('selectedLeague', leagueId);
   };
 
@@ -92,15 +98,16 @@ const Odds = () => {
   };
 
   return (
-    <div className="odds-container">
+    <div className="Odds">
       <div className="odds-form-group">
-        <label>League Name</label>
+        <label>League</label>
         <div className="odds-checkbox-group">
           <label>
             <input
               type="checkbox"
               checked={selectedLeague.id === '3'}
               onChange={() => handleLeagueChange('3')}
+              disabled={isLoading}
             />
             <span>MLB</span>
           </label>
@@ -109,6 +116,7 @@ const Odds = () => {
               type="checkbox"
               checked={selectedLeague.id === '6'}
               onChange={() => handleLeagueChange('6')}
+              disabled={isLoading}
             />
             <span>NHL</span>
           </label>
@@ -117,11 +125,13 @@ const Odds = () => {
               type="checkbox"
               checked={selectedLeague.id === '7'}
               onChange={() => handleLeagueChange('7')}
+              disabled={isLoading}
             />
             <span>NBA</span>
           </label>
         </div>
       </div>
+      
       <div className="odds-initial-divider"></div>
       {isLoading ? (
         <div className="odds-spinner-container">

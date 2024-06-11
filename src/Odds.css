@@ -1,4 +1,4 @@
-.odds-container {
+.Odds {
   text-align: center;
   padding: 20px;
   background-color: #222;
@@ -6,7 +6,7 @@
   min-height: 100vh;
 }
 
-.odds-spinner {
+.Odds .odds-spinner {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -25,7 +25,7 @@
   }
 }
 
-.odds-game-row {
+.Odds .odds-game-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,21 +34,21 @@
   cursor: pointer;
 }
 
-.odds-divider {
+.Odds .odds-divider {
   width: 100%;
   height: 1px;
   background-color: #fff;
   margin: 20px 0;
 }
 
-.odds-team-info {
+.Odds .odds-team-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 1;
 }
 
-.odds-team-logo {
+.Odds .odds-team-logo {
   width: 40px;
   height: 40px;
   margin-bottom: 10px;
@@ -61,13 +61,13 @@
   align-items: center;
 }
 
-.odds-team-name {
+.Odds .odds-team-name {
   font-weight: bold;
   text-align: center;
   white-space: normal;
 }
 
-.odds-game-info {
+.Odds .odds-game-info {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,20 +75,20 @@
   margin-top: -20px;
 }
 
-.odds-initial-divider {
+.Odds .odds-initial-divider {
   width: 100%;
   height: 1px;
   background-color: #fff;
   margin: 20px 0;
 }
 
-.odds-vs-text {
+.Odds .odds-vs-text {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.odds-start-time {
+.Odds .odds-start-time {
   font-size: 14px;
   color: #fff;
   text-align: center;
@@ -96,16 +96,16 @@
   font-weight: bold;
 }
 
-.odds-details {
+.Odds .odds-details {
   margin-top: 20px;
 }
 
-.odds-button-group {
+.Odds .odds-button-group {
   display: flex;
   justify-content: center;
 }
 
-.odds-button-group button {
+.Odds .odds-button-group button {
   margin: 0 5px;
   padding: 10px 20px;
   background-color: #555;
@@ -115,36 +115,36 @@
   cursor: pointer;
 }
 
-.odds-button-group button.odds-active {
+.Odds .odds-button-group button.odds-active {
   background-color: #007bff;
 }
 
-.odds-table {
+.Odds .odds-table {
   background-color: #333;
   margin-top: 20px;
   padding: 20px;
   border-radius: 4px;
 }
 
-.odds-bookmaker-row {
+.Odds .odds-bookmaker-row {
   margin-bottom: 10px;
 }
 
-.odds-bookmaker-name {
+.Odds .odds-bookmaker-name {
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 18px;
   text-align: center;
 }
 
-.odds-row {
+.Odds .odds-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 4px;
 }
 
-.odds-cell {
+.Odds .odds-cell {
   text-align: center;
   font-weight: bold;
   font-size: 14px;
@@ -155,13 +155,13 @@
   border-radius: 4px;
 }
 
-.odds-line-container {
+.Odds .odds-line-container {
   display: flex;
   flex: 1;
   margin: 5px;
 }
 
-.odds-line-cell {
+.Odds .odds-line-cell {
   text-align: center;
   font-size: 14px;
   flex: 1;
@@ -171,29 +171,34 @@
   border-radius: 4px;
 }
 
-.odds-line-cell:first-child {
+.Odds .odds-line-cell:first-child {
   margin-right: 10px;
 }
 
-.odds-form-group {
+.Odds .odds-form-group {
   margin-bottom: 20px;
 }
 
-.odds-checkbox-group {
+.Odds .odds-form-group label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.Odds .odds-checkbox-group {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.odds-checkbox-group label {
+.Odds .odds-checkbox-group label {
   margin: 5px;
 }
 
-.odds-checkbox-group label input[type='checkbox'] {
+.Odds .odds-checkbox-group label input[type='checkbox'] {
   display: none;
 }
 
-.odds-checkbox-group label span {
+.Odds .odds-checkbox-group label span {
   display: inline-block;
   padding: 10px 20px;
   background-color: #333;
@@ -202,16 +207,16 @@
   cursor: pointer;
 }
 
-.odds-checkbox-group label input[type='checkbox']:checked + span {
+.Odds .odds-checkbox-group label input[type='checkbox']:checked + span {
   background-color: #007bff;
 }
 
-.odds-league-buttons {
+.Odds .odds-league-buttons {
   display: flex;
   justify-content: center;
 }
 
-.odds-league-buttons button {
+.Odds .odds-league-buttons button {
   margin: 0 5px;
   padding: 10px 20px;
   background-color: #555;
@@ -221,14 +226,22 @@
   cursor: pointer;
 }
 
-.odds-league-buttons button.odds-active {
+.Odds .odds-league-buttons button.odds-active {
   background-color: #007bff;
 }
 
+.Odds p {
+  margin: 0;
+}
+
+.Odds .odds-checkbox-group label input[type='checkbox']:disabled + span {
+  cursor: default;
+}
+
 @media screen and (max-width: 750px) {
-  .odds-team-name,
-  .odds-vs-text,
-  .odds-start-time {
+  .Odds .odds-team-name,
+  .Odds .odds-vs-text,
+  .Odds .odds-start-time {
     font-size: 12px;
   }
 }

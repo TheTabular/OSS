@@ -8,21 +8,21 @@
   min-height: 100vh;
 }
 
-h1 {
+.App h1 {
   margin-bottom: 20px;
   font-family: 'Slackey';
   font-weight: 500;
+  font-size: 36px;
 }
 
-header {
+.App header {
   position: relative;
   margin-bottom: 20px;
 }
 
-header::after {
+.App header::after {
   content: "";
   position: absolute;
-  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
   width: 95%;
@@ -30,7 +30,7 @@ header::after {
   background-color: #fff;
 }
 
-nav ul {
+.App nav ul {
   display: flex;
   justify-content: center;
   list-style-type: none;
@@ -38,11 +38,11 @@ nav ul {
   margin: 20px 0;
 }
 
-nav ul li {
+.App nav ul li {
   margin: 0 15px;
 }
 
-nav ul li a {
+.App nav ul li a {
   display: inline-block;
   padding: 10px 20px;
   background-color: #333;
@@ -52,6 +52,17 @@ nav ul li a {
   font-size: 18px;
 }
 
-nav ul li a.active {
+.App nav ul li a.active {
   background-color: #007bff;
+}
+
+@media screen and (max-width: 600px) {
+  .App h1 {
+    font-size: 27px;
+  }
+
+  .App nav ul li a {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
 }
