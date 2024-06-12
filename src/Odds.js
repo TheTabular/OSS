@@ -17,25 +17,52 @@ const Odds = () => {
   const [selectedBetType, setSelectedBetType] = useState('spreads');
   const [isLoading, setIsLoading] = useState(true);
   const [noGamesMessage, setNoGamesMessage] = useState('');
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   const selectedLeague = useMemo(() => ({ id: selectedLeagueId }), [selectedLeagueId]);
+
+  const preloadImages = async (games) => {
+    const uniqueTeams = new Set();
+    games.forEach((game) => {
+      uniqueTeams.add(game.away_team);
+      uniqueTeams.add(game.home_team);
+    });
+
+    const imagesToLoad = Array.from(uniqueTeams).map((team) => `/${getLeagueFolder()}/${team}.png`);
+
+    await Promise.all(
+      imagesToLoad.map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = src;
+        });
+      })
+    );
+
+    setImagesLoaded(true);
+  };
 
   useEffect(() => {
     const fetchOddsData = async () => {
       setIsLoading(true);
       setNoGamesMessage('');
       setOddsData([]);
-  
+      setImagesLoaded(false);
+
       console.log(`Fetching odds data for league: ${selectedLeague.id}`);
-  
+
       try {
         const response = await axios.get(`https://api.opensourcesports.xyz/odds?league_id=${selectedLeague.id}`);
         console.log(`Odds data fetched for league: ${selectedLeague.id}`, response.data);
-  
+
         if (response.data.length === 0) {
           setNoGamesMessage('No games found today');
+          setImagesLoaded(true); // Set imagesLoaded to true when there are no games
         } else {
           setOddsData(response.data);
+          await preloadImages(response.data);
         }
       } catch (error) {
         console.error('Error fetching odds data:', error);
@@ -43,8 +70,9 @@ const Odds = () => {
         setIsLoading(false);
       }
     };
-  
+
     fetchOddsData();
+  // eslint-disable-next-line
   }, [selectedLeague.id]);
 
   const formatDateTime = (dateTimeString) => {
@@ -133,7 +161,7 @@ const Odds = () => {
       </div>
       
       <div className="odds-initial-divider"></div>
-      {isLoading ? (
+      {isLoading || !imagesLoaded ? (
         <div className="odds-spinner-container">
           <div className="odds-spinner"></div>
         </div>

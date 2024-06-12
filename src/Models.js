@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Models.css';
 import Horses from './Horses';
 import MajorLeague from './MajorLeague';
 
 function Models() {
   const [selectedLeague, setSelectedLeague] = useState('3');
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/horses/Canterbury.png';
+    img.onload = () => {
+      setImageLoaded(true);
+    };
+  }, []);
+
+  if (!imageLoaded) {
+    return null;
+  }
 
   return (
     <div className="Models">
