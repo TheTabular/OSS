@@ -13,6 +13,7 @@ const Odds = () => {
 
   const [selectedLeagueId, setSelectedLeagueId] = useState(getInitialLeague().id);
   const [oddsData, setOddsData] = useState([]);
+  const [bestOddsData, setBestOddsData] = useState({});
   const [expandedGame, setExpandedGame] = useState(null);
   const [selectedBetType, setSelectedBetType] = useState('spreads');
   const [isLoading, setIsLoading] = useState(true);
@@ -49,32 +50,37 @@ const Odds = () => {
       setIsLoading(true);
       setNoGamesMessage('');
       setOddsData([]);
+      setBestOddsData({});
       setImagesLoaded(false);
-
+  
       console.log(`Fetching odds data for league: ${selectedLeague.id}`);
-
+  
       try {
-        const response = await axios.get(`https://api.opensourcesports.xyz/odds?league_id=${selectedLeague.id}`);
+        const response = await axios.get(`http://127.0.0.1:5000/odds?league_id=${selectedLeague.id}`);
         console.log(`Odds data fetched for league: ${selectedLeague.id}`, response.data);
-
-        if (response.data.length === 0) {
+  
+        if (response.data.filtered_odds_data && response.data.filtered_odds_data.length === 0) {
           setNoGamesMessage('No games found today');
-          setImagesLoaded(true); // Set imagesLoaded to true when there are no games
+          setImagesLoaded(true);
+        } else if (response.data.filtered_odds_data) {
+          setOddsData(response.data.filtered_odds_data);
+          setBestOddsData(response.data.best_odds_data || {});
+          await preloadImages(response.data.filtered_odds_data);
         } else {
-          setOddsData(response.data);
-          await preloadImages(response.data);
+          console.error('Invalid response data:', response.data);
+          setNoGamesMessage('Error fetching odds data');
         }
       } catch (error) {
         console.error('Error fetching odds data:', error);
+        setNoGamesMessage('Error fetching odds data');
       } finally {
         setIsLoading(false);
       }
     };
-
+  
     fetchOddsData();
-  // eslint-disable-next-line
   }, [selectedLeague.id]);
-
+  
   const formatDateTime = (dateTimeString) => {
     if (!dateTimeString) {
       return '';
@@ -108,6 +114,7 @@ const Odds = () => {
   const handleLeagueChange = (leagueId) => {
     setSelectedLeagueId(leagueId);
     setOddsData([]);
+    setBestOddsData({});
     setExpandedGame(null);
     localStorage.setItem('selectedLeague', leagueId);
   };
@@ -127,9 +134,9 @@ const Odds = () => {
 
   return (
     <div className="Odds">
-      <div className="odds-form-group">
+      <div className="form-group">
         <label>League</label>
-        <div className="odds-checkbox-group">
+        <div className="checkbox-group">
           <label>
             <input
               type="checkbox"
@@ -160,162 +167,197 @@ const Odds = () => {
         </div>
       </div>
       
-      <div className="odds-initial-divider"></div>
+      <div className="initial-divider"></div>
       {isLoading || !imagesLoaded ? (
-        <div className="odds-spinner-container">
-          <div className="odds-spinner"></div>
+        <div className="spinner-container">
+          <div className="spinner"></div>
         </div>
       ) : noGamesMessage ? (
         <p>{noGamesMessage}</p>
       ) : (
-        oddsData.map((game) => (
-          <div key={game.id}>
-            <div
-              className={`odds-game-row ${expandedGame === game ? 'odds-expanded' : ''}`}
-              onClick={() => toggleExpand(game)}
-            >
-              <div className="odds-team-info">
-                <img
-                  src={game.away_team ? `/${getLeagueFolder()}/${game.away_team}.png` : ''}
-                  alt={game.away_team}
-                  className="odds-team-logo"
-                />
-                <span className="odds-team-name">{game.away_team}</span>
-              </div>
-              <div className="odds-game-info">
-                <span className="odds-vs-text">vs</span>
-                <span className="odds-start-time">{formatDateTime(game.commence_time)}</span>
-              </div>
-              <div className="odds-team-info">
-                <img
-                  src={game.home_team ? `/${getLeagueFolder()}/${game.home_team}.png` : ''}
-                  alt={game.home_team}
-                  className="odds-team-logo"
-                />
-                <span className="odds-team-name">{game.home_team}</span>
-              </div>
-            </div>
-            {expandedGame === game && (
-              <div className="odds-details">
-                <div className="odds-button-group">
-                  <button
-                    className={selectedBetType === 'spreads' ? 'odds-active' : ''}
-                    onClick={() => handleBetTypeChange('spreads')}
-                  >
-                    Spread
-                  </button>
-                  <button
-                    className={selectedBetType === 'h2h' ? 'odds-active' : ''}
-                    onClick={() => handleBetTypeChange('h2h')}
-                  >
-                    Moneyline
-                  </button>
-                  <button
-                    className={selectedBetType === 'totals' ? 'odds-active' : ''}
-                    onClick={() => handleBetTypeChange('totals')}
-                  >
-                    Total
-                  </button>
+        oddsData.map((game) => {
+          const gameKey = `${game.away_team} vs ${game.home_team}`;
+          const bestOdds = bestOddsData[gameKey] || {};
+
+          return (
+            <div key={game.id}>
+              <div
+                className={`game-row ${expandedGame === game ? 'expanded' : ''}`}
+                onClick={() => toggleExpand(game)}
+              >
+                <div className="team-info">
+                  <img
+                    src={game.away_team ? `/${getLeagueFolder()}/${game.away_team}.png` : ''}
+                    alt={game.away_team}
+                    className="team-logo"
+                  />
+                  <span className="team-name">{game.away_team}</span>
                 </div>
-                <div className="odds-table">
-                  {game.bookmakers.map((bookmaker) => {
-                    const spreadsMarket = bookmaker.markets.find((market) => market.key === 'spreads');
-                    const h2hMarket = bookmaker.markets.find((market) => market.key === 'h2h');
-                    const totalsMarket = bookmaker.markets.find((market) => market.key === 'totals');
+                <div className="game-info">
+                  <span className="vs-text">vs</span>
+                  <span className="start-time">{formatDateTime(game.commence_time)}</span>
+                </div>
+                <div className="team-info">
+                  <img
+                    src={game.home_team ? `/${getLeagueFolder()}/${game.home_team}.png` : ''}
+                    alt={game.home_team}
+                    className="team-logo"
+                  />
+                  <span className="team-name">{game.home_team}</span>
+                </div>
+              </div>
+              {expandedGame === game && (
+                <div className="details">
+                  <div className="button-group">
+                    <button
+                      className={selectedBetType === 'spreads' ? 'active' : ''}
+                      onClick={() => handleBetTypeChange('spreads')}
+                    >
+                      Spread
+                    </button>
+                    <button
+                      className={selectedBetType === 'h2h' ? 'active' : ''}
+                      onClick={() => handleBetTypeChange('h2h')}
+                    >
+                      Moneyline
+                    </button>
+                    <button
+                      className={selectedBetType === 'totals' ? 'active' : ''}
+                      onClick={() => handleBetTypeChange('totals')}
+                    >
+                      Total
+                    </button>
+                  </div>
+                  <div className="table">
+                    {game.bookmakers.map((bookmaker) => {
+                      const spreadsMarket = bookmaker.markets.find((market) => market.key === 'spreads');
+                      const h2hMarket = bookmaker.markets.find((market) => market.key === 'h2h');
+                      const totalsMarket = bookmaker.markets.find((market) => market.key === 'totals');
 
-                    // Check if any of the required odds values are missing
-                    if (
-                      (selectedBetType === 'spreads' && (!spreadsMarket || !spreadsMarket.outcomes[0] || !spreadsMarket.outcomes[1])) ||
-                      (selectedBetType === 'h2h' && (!h2hMarket || !h2hMarket.outcomes[0] || !h2hMarket.outcomes[1])) ||
-                      (selectedBetType === 'totals' && (!totalsMarket || !totalsMarket.outcomes[0] || !totalsMarket.outcomes[1]))
-                    ) {
-                      return null; // Skip rendering the bookmaker row if any required odds are missing
-                    }
+                      // Check if any of the required odds values are missing
+                      if (
+                        (selectedBetType === 'spreads' && (!spreadsMarket || !spreadsMarket.outcomes[0] || !spreadsMarket.outcomes[1])) ||
+                        (selectedBetType === 'h2h' && (!h2hMarket || !h2hMarket.outcomes[0] || !h2hMarket.outcomes[1])) ||
+                        (selectedBetType === 'totals' && (!totalsMarket || !totalsMarket.outcomes[0] || !totalsMarket.outcomes[1]))
+                      ) {
+                        return null; // Skip rendering the bookmaker row if any required odds are missing
+                      }
 
-                    return (
-                      <div key={bookmaker.key} className="odds-bookmaker-row">
-                        <div className="odds-bookmaker-name">{bookmaker.title}</div>
-                        <div className="odds-row">
-                          <div className="odds-cell">
-                            {selectedBetType === 'spreads' && (
-                              <span>
-                                {spreadsMarket.outcomes[0].price >= 100 ? '+' : ''}
-                                {spreadsMarket.outcomes[0].price}
-                              </span>
-                            )}
-                            {selectedBetType === 'h2h' && (
-                              <span>
-                                {h2hMarket.outcomes[0].price >= 100 ? '+' : ''}
-                                {h2hMarket.outcomes[0].price}
-                              </span>
-                            )}
-                            {selectedBetType === 'totals' && (
-                              <span>
-                                {totalsMarket.outcomes[0].price >= 100 ? '+' : ''}
-                                {totalsMarket.outcomes[0].price}
-                              </span>
-                            )}
-                          </div>
-                          <div className="odds-line-container">
-                            <div className="odds-line-cell">
+                      return (
+                        <div key={bookmaker.key} className="bookmaker-row">
+                          <div className="bookmaker-name">{bookmaker.title}</div>
+                          <div className="row">
+                            <div className="cell">
                               {selectedBetType === 'spreads' && (
-                                <span>
-                                  {spreadsMarket.outcomes[0].point >= 0 ? '+' : ''}
-                                  {spreadsMarket.outcomes[0].point}
-                                </span>
+                                <>
+                                  {bestOdds.Spread && bestOdds.Spread[game.away_team] && bestOdds.Spread[game.away_team].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_left.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {spreadsMarket.outcomes[0].price >= 100 ? '+' : ''}
+                                    {spreadsMarket.outcomes[0].price}
+                                  </span>
+                                </>
                               )}
-                              {selectedBetType === 'h2h' && <span>Away</span>}
+                              {selectedBetType === 'h2h' && (
+                                <>
+                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.away_team] && bestOdds.Moneyline[game.away_team].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_left.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {h2hMarket.outcomes[0].price >= 100 ? '+' : ''}
+                                    {h2hMarket.outcomes[0].price}
+                                  </span>
+                                </>
+                              )}
                               {selectedBetType === 'totals' && (
-                                <span>
-                                  O {totalsMarket.outcomes[0].point}
-                                </span>
+                                <>
+                                  {bestOdds.Total && bestOdds.Total['Over'] && bestOdds.Total['Over'].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_left.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {totalsMarket.outcomes[0].price >= 100 ? '+' : ''}
+                                    {totalsMarket.outcomes[0].price}
+                                  </span>
+                                </>
                               )}
                             </div>
-                            <div className="odds-line-cell">
+                            <div className="line-container">
+                              <div className="line-cell">
+                                {selectedBetType === 'spreads' && (
+                                  <span>
+                                    {spreadsMarket.outcomes[0].point >= 0 ? '+' : ''}
+                                    {spreadsMarket.outcomes[0].point}
+                                  </span>
+                                )}
+                                {selectedBetType === 'h2h' && <span>Away</span>}
+                                {selectedBetType === 'totals' && (
+                                  <span>
+                                    O {totalsMarket.outcomes[0].point}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="line-cell">
+                                {selectedBetType === 'spreads' && (
+                                  <span>
+                                    {spreadsMarket.outcomes[1].point >= 0 ? '+' : ''}
+                                    {spreadsMarket.outcomes[1].point}
+                                  </span>
+                                )}
+                                {selectedBetType === 'h2h' && <span>Home</span>}
+                                {selectedBetType === 'totals' && (
+                                  <span>
+                                    U {totalsMarket.outcomes[1].point}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="cell">
                               {selectedBetType === 'spreads' && (
-                                <span>
-                                  {spreadsMarket.outcomes[1].point >= 0 ? '+' : ''}
-                                  {spreadsMarket.outcomes[1].point}
-                                </span>
+                                <>
+                                  {bestOdds.Spread && bestOdds.Spread[game.home_team] && bestOdds.Spread[game.home_team].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_right.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {spreadsMarket.outcomes[1].price >= 100 ? '+' : ''}
+                                    {spreadsMarket.outcomes[1].price}
+                                  </span>
+                                </>
                               )}
-                              {selectedBetType === 'h2h' && <span>Home</span>}
+                              {selectedBetType === 'h2h' && (
+                                <>
+                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.home_team] && bestOdds.Moneyline[game.home_team].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_right.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {h2hMarket.outcomes[1].price >= 100 ? '+' : ''}
+                                    {h2hMarket.outcomes[1].price}
+                                  </span>
+                                </>
+                              )}
                               {selectedBetType === 'totals' && (
-                                <span>
-                                  U {totalsMarket.outcomes[1].point}
-                                </span>
+                                <>
+                                  {bestOdds.Total && bestOdds.Total['Under'] && bestOdds.Total['Under'].provider === bookmaker.title && (
+                                    <img src="/icons/Crown_right.png" alt="Best Odds" />
+                                  )}
+                                  <span>
+                                    {totalsMarket.outcomes[1].price >= 100 ? '+' : ''}
+                                    {totalsMarket.outcomes[1].price}
+                                  </span>
+                                </>
                               )}
                             </div>
-                          </div>
-                          <div className="odds-cell">
-                            {selectedBetType === 'spreads' && (
-                              <span>
-                                {spreadsMarket.outcomes[1].price >= 100 ? '+' : ''}
-                                {spreadsMarket.outcomes[1].price}
-                              </span>
-                            )}
-                            {selectedBetType === 'h2h' && (
-                              <span>
-                                {h2hMarket.outcomes[1].price >= 100 ? '+' : ''}
-                                {h2hMarket.outcomes[1].price}
-                              </span>
-                            )}
-                            {selectedBetType === 'totals' && (
-                              <span>
-                                {totalsMarket.outcomes[1].price >= 100 ? '+' : ''}
-                                {totalsMarket.outcomes[1].price}
-                              </span>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
-            <div className="odds-divider"></div>
-          </div>
-        ))
+              )}
+              <div className="divider"></div>
+            </div>
+          );
+        })
       )}
     </div>
   );
