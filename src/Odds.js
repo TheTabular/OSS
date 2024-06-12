@@ -56,7 +56,7 @@ const Odds = () => {
       console.log(`Fetching odds data for league: ${selectedLeague.id}`);
   
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/odds?league_id=${selectedLeague.id}`);
+        const response = await axios.get(`https://api.opensourcesports.xyz/odds?league_id=${selectedLeague.id}`);
         console.log(`Odds data fetched for league: ${selectedLeague.id}`, response.data);
   
         if (response.data.filtered_odds_data && response.data.filtered_odds_data.length === 0) {
