@@ -250,7 +250,7 @@ const Odds = () => {
                             <div className="cell">
                               {selectedBetType === 'spreads' && (
                                 <>
-                                  {bestOdds.Spread && bestOdds.Spread[game.away_team] && bestOdds.Spread[game.away_team].provider === bookmaker.title && (
+                                  {bestOdds.Spread && bestOdds.Spread[game.away_team] && bestOdds.Spread[game.away_team].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_left.png" alt="Best Odds" />
                                   )}
                                   <span>
@@ -261,7 +261,7 @@ const Odds = () => {
                               )}
                               {selectedBetType === 'h2h' && (
                                 <>
-                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.away_team] && bestOdds.Moneyline[game.away_team].provider === bookmaker.title && (
+                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.away_team] && bestOdds.Moneyline[game.away_team].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_left.png" alt="Best Odds" />
                                   )}
                                   <span>
@@ -272,7 +272,7 @@ const Odds = () => {
                               )}
                               {selectedBetType === 'totals' && (
                                 <>
-                                  {bestOdds.Total && bestOdds.Total['Over'] && bestOdds.Total['Over'].provider === bookmaker.title && (
+                                  {bestOdds.Total && bestOdds.Total['Over'] && bestOdds.Total['Over'].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_left.png" alt="Best Odds" />
                                   )}
                                   <span>
@@ -315,7 +315,7 @@ const Odds = () => {
                             <div className="cell">
                               {selectedBetType === 'spreads' && (
                                 <>
-                                  {bestOdds.Spread && bestOdds.Spread[game.home_team] && bestOdds.Spread[game.home_team].provider === bookmaker.title && (
+                                  {bestOdds.Spread && bestOdds.Spread[game.home_team] && bestOdds.Spread[game.home_team].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_right.png" alt="Best Odds" />
                                   )}
                                   <span>
@@ -326,7 +326,7 @@ const Odds = () => {
                               )}
                               {selectedBetType === 'h2h' && (
                                 <>
-                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.home_team] && bestOdds.Moneyline[game.home_team].provider === bookmaker.title && (
+                                  {bestOdds.Moneyline && bestOdds.Moneyline[game.home_team] && bestOdds.Moneyline[game.home_team].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_right.png" alt="Best Odds" />
                                   )}
                                   <span>
@@ -337,7 +337,7 @@ const Odds = () => {
                               )}
                               {selectedBetType === 'totals' && (
                                 <>
-                                  {bestOdds.Total && bestOdds.Total['Under'] && bestOdds.Total['Under'].provider === bookmaker.title && (
+                                  {bestOdds.Total && bestOdds.Total['Under'] && bestOdds.Total['Under'].providers.includes(bookmaker.title) && (
                                     <img src="/icons/Crown_right.png" alt="Best Odds" />
                                   )}
                                   <span>
