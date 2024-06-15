@@ -25,6 +25,10 @@
   }
 }
 
+.Odds .matches {
+  padding: 20px;
+}
+
 .Odds .game-row {
   display: flex;
   align-items: center;
@@ -192,6 +196,7 @@
 }
 
 .Odds .form-group {
+  padding: -20px;
   margin-bottom: 20px;
 }
 
@@ -252,6 +257,24 @@
 
 .Odds .checkbox-group label input[type='checkbox']:disabled + span {
   cursor: default;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.live-text {
+  color: red;
+  font-weight: bold;
+  animation: flash 1s infinite;
 }
 
 @media screen and (max-width: 750px) {

@@ -38,7 +38,7 @@ function Horses() {
       setIsLoading(false);
 
       if (Object.keys(result).length === 0) {
-        setNoRacesMessage('No races found today');
+        setNoRacesMessage('No races found');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -107,43 +107,44 @@ function Horses() {
             </button>
           </div>
         </div>
-
-        {isLoading && <div className="spinner"></div>}
-      </form>
-
-      {!isLoading && noRacesMessage && <p>{noRacesMessage}</p>}
-      {hasModelResults && (
-        <div className="results-section">
-          <h2>Race Predictions</h2>
-          {Object.entries(results).map(([key, race]) => (
-            <div key={key} className="race-prediction">
-              <h3>{key}</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Post No</th>
-                    <th>Horse Name</th>
-                    <th>{selectedMetric}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {race.map((horse) => (
-                    <tr key={horse.post_no}>
-                      <td>{horse.post_no}</td>
-                      <td>{horse.horse_name}</td>
-                      <td className="centered">
-                        {selectedMetric === 'Finish Time'
-                          ? horse.predicted_time
-                          : horse.predicted_position}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        
+        <div className='predictions'>
+          {isLoading && <div className="spinner"></div>}
+          {!isLoading && noRacesMessage && <p>{noRacesMessage}</p>}
+          {hasModelResults && (
+            <div className="results-section">
+              <h2>Race Predictions</h2>
+              {Object.entries(results).map(([key, race]) => (
+                <div key={key} className="race-prediction">
+                  <h3>{key}</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Post No</th>
+                        <th>Horse Name</th>
+                        <th>{selectedMetric}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {race.map((horse) => (
+                        <tr key={horse.post_no}>
+                          <td>{horse.post_no}</td>
+                          <td>{horse.horse_name}</td>
+                          <td className="centered">
+                            {selectedMetric === 'Finish Time'
+                              ? horse.predicted_time
+                              : horse.predicted_position}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      </form>
     </div>
   );
 }

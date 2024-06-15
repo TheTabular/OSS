@@ -141,6 +141,14 @@
   text-align: center;
 }
 
+.Horses p {
+  margin: 0;
+}
+
+.Horses .predictions {
+  padding: 20px
+}
+
 @media screen and (max-width: 600px) {
     .Horses .race-prediction h3 {
       font-size: 18px;

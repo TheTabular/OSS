@@ -256,6 +256,10 @@
   margin: 0;
 }
 
+.MajorLeague .predictions {
+  padding: 20px
+}
+
 @media (max-width: 750px) {
   .MajorLeague .match-prediction {
     font-size: 10px;

@@ -48,7 +48,7 @@ function MajorLeague({ selectedLeague }) {
       setIsLoading(false);
 
       if (Object.keys(result).length === 0) {
-        setNoGamesMessage('No games found today');
+        setNoGamesMessage('No games found');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -147,99 +147,100 @@ function MajorLeague({ selectedLeague }) {
             </button>
           </div>
         </div>
-
-        {isLoading && <div className="spinner"></div>}
-        {!isLoading && noGamesMessage && <p>{noGamesMessage}</p>}
-      </form>
-
-      {hasModelResults && (
-        <div className="results-section">
-          <h2>Match Predictions</h2>
-          <div className="column-headers">
-            <p>Away</p>
-            <p>Total</p>
-            <p>Home</p>
-          </div>
-          {Object.entries(results).map(([key, match]) => (
-            <div key={key} className="match-prediction">
-              <div className="team-prediction">
-                <div className="team-header">
-                  <img
-                    src={`/${selectedLeague === '7' ? 'nba' : selectedLeague === '3' ? 'mlb' : 'nhl'}/${match.away_team}.png`}
-                    alt={match.away_team}
-                  />
-                  <p>{match.away_team}</p>
-                </div>
-                <p><span>Moneyline Odds:</span> {match.away_odds > 0 ? `+${match.away_odds}` : match.away_odds}</p>
-                <p><span>Win Percentage:</span> {match.away_win_percent}%</p>
-                <p>
-                  <span>Expected Value:</span>{' '}
-                  <span className={match.away_ev > 0 ? 'positive-ev' : 'negative-ev'}>
-                    {match.away_ev}
-                  </span>
-                </p>
+        
+        <div className='predictions'>
+          {isLoading && <div className="spinner"></div>}
+          {!isLoading && noGamesMessage && <p>{noGamesMessage}</p>}
+          {hasModelResults && (
+            <div className="results-section">
+              <h2>Match Predictions</h2>
+              <div className="column-headers">
+                <p>Away</p>
+                <p>Total</p>
+                <p>Home</p>
               </div>
+              {Object.entries(results).map(([key, match]) => (
+                <div key={key} className="match-prediction">
+                  <div className="team-prediction">
+                    <div className="team-header">
+                      <img
+                        src={`/${selectedLeague === '7' ? 'nba' : selectedLeague === '3' ? 'mlb' : 'nhl'}/${match.away_team}.png`}
+                        alt={match.away_team}
+                      />
+                      <p>{match.away_team}</p>
+                    </div>
+                    <p><span>Moneyline Odds:</span> {match.away_odds > 0 ? `+${match.away_odds}` : match.away_odds}</p>
+                    <p><span>Win Percentage:</span> {match.away_win_percent}%</p>
+                    <p>
+                      <span>Expected Value:</span>{' '}
+                      <span className={match.away_ev > 0 ? 'positive-ev' : 'negative-ev'}>
+                        {match.away_ev}
+                      </span>
+                    </p>
+                  </div>
 
-              <div className="total-predictions">
-                <div className="commence-time">
-                  {moment(match.commence_time)
-                    .tz(timezoneMapping[selectedState] || 'America/New_York')
-                    .format('MMM D, h:mm A z')}
-                </div>
-                <div className="total-value">{match.total_amount}</div>
-                <div className="over-under">
-                  <p>
-                    <span>Over:</span>{' '}
-                    <span
-                      className={
-                        match.over_win_percent === 50 && match.under_win_percent === 50
-                          ? ''
-                          : match.over_win_percent > match.under_win_percent
-                          ? 'positive-ev'
-                          : 'negative-ev'
-                      }
-                    >
-                      {match.over_win_percent}%
-                    </span>
-                  </p>
-                  <p>
-                    <span>Under:</span>{' '}
-                    <span
-                      className={
-                        match.over_win_percent === 50 && match.under_win_percent === 50
-                          ? ''
-                          : match.under_win_percent > match.over_win_percent
-                          ? 'positive-ev'
-                          : 'negative-ev'
-                      }
-                    >
-                      {match.under_win_percent}%
-                    </span>
-                  </p>
-                </div>
-              </div>
+                  <div className="total-predictions">
+                    <div className="commence-time">
+                      {moment(match.commence_time)
+                        .tz(timezoneMapping[selectedState] || 'America/New_York')
+                        .format('MMM D, h:mm A z')}
+                    </div>
+                    <div className="total-value">{match.total_amount}</div>
+                    <div className="over-under">
+                      <p>
+                        <span>Over:</span>{' '}
+                        <span
+                          className={
+                            match.over_win_percent === 50 && match.under_win_percent === 50
+                              ? ''
+                              : match.over_win_percent > match.under_win_percent
+                              ? 'positive-ev'
+                              : 'negative-ev'
+                          }
+                        >
+                          {match.over_win_percent}%
+                        </span>
+                      </p>
+                      <p>
+                        <span>Under:</span>{' '}
+                        <span
+                          className={
+                            match.over_win_percent === 50 && match.under_win_percent === 50
+                              ? ''
+                              : match.under_win_percent > match.over_win_percent
+                              ? 'positive-ev'
+                              : 'negative-ev'
+                          }
+                        >
+                          {match.under_win_percent}%
+                        </span>
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="team-prediction">
-                <div className="team-header">
-                  <img
-                    src={`/${selectedLeague === '7' ? 'nba' : selectedLeague === '3' ? 'mlb' : 'nhl'}/${match.home_team}.png`}
-                    alt={match.home_team}
-                  />
-                  <p>{match.home_team}</p>
+                  <div className="team-prediction">
+                    <div className="team-header">
+                      <img
+                        src={`/${selectedLeague === '7' ? 'nba' : selectedLeague === '3' ? 'mlb' : 'nhl'}/${match.home_team}.png`}
+                        alt={match.home_team}
+                      />
+                      <p>{match.home_team}</p>
+                    </div>
+                    <p><span>Moneyline Odds:</span> {match.home_odds > 0 ? `+${match.home_odds}` : match.home_odds}</p>
+                    <p><span>Win Percentage:</span> {match.home_win_percent}%</p>
+                    <p>
+                      <span>Expected Value:</span>{' '}
+                      <span className={match.home_ev > 0 ? 'positive-ev' : 'negative-ev'}>
+                        {match.home_ev}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <p><span>Moneyline Odds:</span> {match.home_odds > 0 ? `+${match.home_odds}` : match.home_odds}</p>
-                <p><span>Win Percentage:</span> {match.home_win_percent}%</p>
-                <p>
-                  <span>Expected Value:</span>{' '}
-                  <span className={match.home_ev > 0 ? 'positive-ev' : 'negative-ev'}>
-                    {match.home_ev}
-                  </span>
-                </p>
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      </form>
     </div>
   );
 }

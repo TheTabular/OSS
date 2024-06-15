@@ -4,6 +4,7 @@ import './App.css';
 import Home from './Home';
 import Models from './Models';
 import Odds from './Odds';
+import Data from './Data';
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
                   Odds
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  to="/data"
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                >
+                  Data
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </header>
@@ -45,6 +54,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/models" element={<Models />} />
           <Route path="/odds" element={<Odds />} />
+          <Route path="/data" element={<Data />} />
         </Routes>
       </div>
     </Router>
